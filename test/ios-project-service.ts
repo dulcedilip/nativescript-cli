@@ -69,7 +69,9 @@ function createTestInjector(projectPath: string, projectName: string): IInjector
 		platformsDir: path.join(projectPath, "platforms"),
 		projectName: projectName,
 		projectPath: projectPath,
-		projectFilePath: path.join(projectPath, "package.json")
+		projectFilePath: path.join(projectPath, "package.json"),
+		projectId: "",
+		projectIdentifiers: { android: "", ios: ""}
 	});
 	testInjector.register("projectHelper", {});
 	testInjector.register("xcodeSelectService", {});

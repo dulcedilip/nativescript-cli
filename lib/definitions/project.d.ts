@@ -57,7 +57,8 @@ interface IProjectData extends IProjectDir {
 	projectName: string;
 	platformsDir: string;
 	projectFilePath: string;
-	projectId?: string;
+	projectId: string;
+	projectIdentifiers?: Mobile.IProjectIdentifier;
 	dependencies: any;
 	devDependencies: IStringDictionary;
 	appDirectoryPath: string;

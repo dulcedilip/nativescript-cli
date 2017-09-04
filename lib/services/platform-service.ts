@@ -99,7 +99,7 @@ export class PlatformService extends EventEmitter implements IPlatformService {
 		// Log the values for project
 		this.$logger.trace("Creating NativeScript project for the %s platform", platform);
 		this.$logger.trace("Path: %s", platformData.projectRoot);
-		this.$logger.trace("Package: %s", projectData.projectId);
+		this.$logger.trace("Package: %s", projectData.projectIdentifiers[platform]);
 		this.$logger.trace("Name: %s", projectData.projectName);
 
 		this.$logger.out("Copying template files...");
@@ -224,13 +224,21 @@ export class PlatformService extends EventEmitter implements IPlatformService {
 			platform = this.$mobileHelper.normalizePlatformName(platform);
 			this.$logger.trace("Validate options for platform: " + platform);
 			const platformData = this.$platformsData.getPlatformData(platform, projectData);
-			return await platformData.platformProjectService.validateOptions(projectData.projectId, provision, teamId);
+			return await platformData.platformProjectService.validateOptions(
+				projectData.projectIdentifiers[platform.toLowerCase()],
+				provision,
+				teamId
+			);
 		} else {
 			let valid = true;
 			for (const availablePlatform in this.$platformsData.availablePlatforms) {
 				this.$logger.trace("Validate options for platform: " + availablePlatform);
 				const platformData = this.$platformsData.getPlatformData(availablePlatform, projectData);
-				valid = valid && await platformData.platformProjectService.validateOptions(projectData.projectId, provision, teamId);
+				valid = valid && await platformData.platformProjectService.validateOptions(
+					projectData.projectIdentifiers[availablePlatform.toLowerCase()],
+					provision,
+					teamId
+				);
 			}
 
 			return valid;
@@ -408,7 +416,7 @@ export class PlatformService extends EventEmitter implements IPlatformService {
 
 	public async shouldInstall(device: Mobile.IDevice, projectData: IProjectData, outputPath?: string): Promise<boolean> {
 		const platform = device.deviceInfo.platform;
-		if (!(await device.applicationManager.isApplicationInstalled(projectData.projectId))) {
+		if (!(await device.applicationManager.isApplicationInstalled(projectData.projectIdentifiers[platform.toLowerCase()]))) {
 			return true;
 		}
 
@@ -438,12 +446,13 @@ export class PlatformService extends EventEmitter implements IPlatformService {
 
 		await platformData.platformProjectService.cleanDeviceTempFolder(device.deviceInfo.identifier, projectData);
 
-		await device.applicationManager.reinstallApplication(projectData.projectId, packageFile);
+		const platform = device.deviceInfo.platform.toLowerCase();
+		await device.applicationManager.reinstallApplication(projectData.projectIdentifiers[platform], packageFile);
 
 		if (!buildConfig.release) {
 			const deviceFilePath = await this.getDeviceBuildInfoFilePath(device, projectData);
 			const buildInfoFilePath = outputFilePath || this.getBuildOutputPath(device.deviceInfo.platform, platformData, { buildForDevice: !device.isEmulator });
-			const appIdentifier = projectData.projectId;
+			const appIdentifier = projectData.projectIdentifiers[platform];
 
 			await device.fileSystem.putFile(path.join(buildInfoFilePath, buildInfoFileName), deviceFilePath, appIdentifier);
 		}
@@ -529,8 +538,9 @@ export class PlatformService extends EventEmitter implements IPlatformService {
 	}
 
 	private async getDeviceBuildInfoFilePath(device: Mobile.IDevice, projectData: IProjectData): Promise<string> {
+		const platform = device.deviceInfo.platform.toLowerCase();
 		const deviceRootPath = await this.$devicePathProvider.getDeviceProjectRootPath(device, {
-			appIdentifier: projectData.projectId,
+			appIdentifier: projectData.projectIdentifiers[platform],
 			getDirname: true
 		});
 		return helpers.fromWindowsRelativePathToUnix(path.join(deviceRootPath, buildInfoFileName));
@@ -787,8 +797,9 @@ export class PlatformService extends EventEmitter implements IPlatformService {
 	public async readFile(device: Mobile.IDevice, deviceFilePath: string, projectData: IProjectData): Promise<string> {
 		temp.track();
 		const uniqueFilePath = temp.path({ suffix: ".tmp" });
+		const platform = device.deviceInfo.platform.toLowerCase();
 		try {
-			await device.fileSystem.getFile(deviceFilePath, projectData.projectId, uniqueFilePath);
+			await device.fileSystem.getFile(deviceFilePath, projectData.projectIdentifiers[platform], uniqueFilePath);
 		} catch (e) {
 			return null;
 		}

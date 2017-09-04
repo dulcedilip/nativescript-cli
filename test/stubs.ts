@@ -245,6 +245,7 @@ export class ProjectDataStub implements IProjectData {
 		return "";
 	}
 	projectFilePath: string;
+	projectIdentifiers: Mobile.IProjectIdentifier;
 	projectId: string;
 	dependencies: any;
 	appDirectoryPath: string;
@@ -253,6 +254,8 @@ export class ProjectDataStub implements IProjectData {
 	projectType: string;
 	initializeProjectData(projectDir?: string): void {
 		this.projectDir = this.projectDir || projectDir;
+		this.projectIdentifiers = { android: "", ios: ""};
+		this.projectId = "";
 	}
 }
 

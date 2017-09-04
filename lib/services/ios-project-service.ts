@@ -232,7 +232,7 @@ export class IOSProjectService extends projectServiceBaseLib.PlatformProjectServ
 		if (options && options.provision) {
 			plistTemplate += `    <key>provisioningProfiles</key>
     <dict>
-        <key>${projectData.projectId}</key>
+        <key>${projectData.projectIdentifiers.ios}</key>
         <string>${options.provision}</string>
     </dict>`;
 		}
@@ -279,7 +279,7 @@ export class IOSProjectService extends projectServiceBaseLib.PlatformProjectServ
 	if (options && options.provision) {
 		plistTemplate += `    <key>provisioningProfiles</key>
 <dict>
-	<key>${projectData.projectId}</key>
+	<key>${projectData.projectIdentifiers.ios}</key>
 	<string>${options.provision}</string>
 </dict>`;
 	}
@@ -491,7 +491,7 @@ export class IOSProjectService extends projectServiceBaseLib.PlatformProjectServ
 
 			if (shouldUpdateXcode) {
 				const pickStart = Date.now();
-				const mobileprovision = mobileProvisionData || await this.$iOSProvisionService.pick(provision, projectData.projectId);
+				const mobileprovision = mobileProvisionData || await this.$iOSProvisionService.pick(provision, projectData.projectIdentifiers.ios);
 				const pickEnd = Date.now();
 				this.$logger.trace("Searched and " + (mobileprovision ? "found" : "failed to find ") + " matching provisioning profile. (" + (pickEnd - pickStart) + "ms.)");
 				if (!mobileprovision) {
@@ -751,10 +751,10 @@ We will now place an empty obsolete compatability white screen LauncScreen.xib f
 		await this.$iOSEntitlementsService.merge(projectData);
 		await this.mergeProjectXcconfigFiles(release, projectData);
 		for (const pluginData of await this.getAllInstalledPlugins(projectData)) {
-			await this.$pluginVariablesService.interpolatePluginVariables(pluginData, this.getPlatformData(projectData).configurationFilePath, projectData);
+			await this.$pluginVariablesService.interpolatePluginVariables(pluginData, this.getPlatformData(projectData).configurationFilePath, projectData.projectDir);
 		}
 
-		this.$pluginVariablesService.interpolateAppIdentifier(this.getPlatformData(projectData).configurationFilePath, projectData);
+		this.$pluginVariablesService.interpolateAppIdentifier(this.getPlatformData(projectData).configurationFilePath, projectData.projectIdentifiers.ios);
 	}
 
 	private getInfoPlistPath(projectData: IProjectData): string {
@@ -817,7 +817,7 @@ We will now place an empty obsolete compatability white screen LauncScreen.xib f
 
 		makePatch(infoPlistPath);
 
-		if (projectData.projectId) {
+		if (projectData.projectIdentifiers && projectData.projectIdentifiers.ios) {
 			session.patch({
 				name: "CFBundleIdentifier from package.json nativescript.id",
 				read: () =>
@@ -826,13 +826,13 @@ We will now place an empty obsolete compatability white screen LauncScreen.xib f
 						<plist version="1.0">
 						<dict>
 							<key>CFBundleIdentifier</key>
-							<string>${projectData.projectId}</string>
+							<string>${projectData.projectIdentifiers.ios}</string>
 						</dict>
 						</plist>`
 			});
 		}
 
-		if (!buildOptions.release && projectData.projectId) {
+		if (!buildOptions.release && projectData.projectIdentifiers && projectData.projectIdentifiers.ios) {
 			session.patch({
 				name: "CFBundleURLTypes from package.json nativescript.id",
 				read: () =>
@@ -847,7 +847,7 @@ We will now place an empty obsolete compatability white screen LauncScreen.xib f
 									<string>Editor</string>
 									<key>CFBundleURLSchemes</key>
 									<array>
-										<string>${projectData.projectId.replace(/[^A-Za-z0-9]/g, "")}</string>
+										<string>${projectData.projectIdentifiers.ios.replace(/[^A-Za-z0-9]/g, "")}</string>
 									</array>
 								</dict>
 							</array>

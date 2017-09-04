@@ -51,7 +51,9 @@ async function createProjectFile(testInjector: IInjector): Promise<string> {
 
 	const projectData = {
 		"name": "myProject",
-		"nativescript": {}
+		"nativescript": {
+			id: { android: "", ios: ""}
+		}
 	};
 	testInjector.resolve("fs").writeJson(path.join(tempFolder, "package.json"), projectData);
 
@@ -100,7 +102,7 @@ describe("Plugin Variables service", () => {
 			let actualError: string = null;
 
 			try {
-				await pluginVariablesService.savePluginVariablesInProjectFile(pluginData, projectData);
+				await pluginVariablesService.savePluginVariablesInProjectFile(pluginData, projectData.projectDir);
 			} catch (err) {
 				actualError = err.message;
 			}
@@ -120,7 +122,7 @@ describe("Plugin Variables service", () => {
 			const pluginVariablesService: IPluginVariablesService = testInjector.resolve("pluginVariablesService");
 			const projectData: IProjectData = testInjector.resolve("projectData");
 			projectData.initializeProjectData();
-			await pluginVariablesService.savePluginVariablesInProjectFile(pluginData, projectData);
+			await pluginVariablesService.savePluginVariablesInProjectFile(pluginData, projectData.projectDir);
 
 			const fs = testInjector.resolve("fs");
 			const staticConfig: IStaticConfig = testInjector.resolve("staticConfig");
@@ -138,7 +140,7 @@ describe("Plugin Variables service", () => {
 			const projectData = testInjector.resolve("projectData");
 			projectData.initializeProjectData();
 
-			await pluginVariablesService.savePluginVariablesInProjectFile(pluginData, projectData);
+			await pluginVariablesService.savePluginVariablesInProjectFile(pluginData, projectData.projectDir);
 
 			const fs = testInjector.resolve("fs");
 			const staticConfig: IStaticConfig = testInjector.resolve("staticConfig");
@@ -165,7 +167,7 @@ describe("Plugin Variables service", () => {
 			const pluginVariablesService: IPluginVariablesService = testInjector.resolve("pluginVariablesService");
 			const projectData = testInjector.resolve("projectData");
 			projectData.initializeProjectData();
-			await pluginVariablesService.savePluginVariablesInProjectFile(pluginData, projectData);
+			await pluginVariablesService.savePluginVariablesInProjectFile(pluginData, projectData.projectDir);
 
 			const fs = testInjector.resolve("fs");
 			const staticConfig: IStaticConfig = testInjector.resolve("staticConfig");
@@ -183,7 +185,7 @@ describe("Plugin Variables service", () => {
 			const projectData = testInjector.resolve("projectData");
 			projectData.initializeProjectData();
 
-			await pluginVariablesService.savePluginVariablesInProjectFile(pluginData, projectData);
+			await pluginVariablesService.savePluginVariablesInProjectFile(pluginData, projectData.projectDir);
 
 			const fs = testInjector.resolve("fs");
 			const staticConfig: IStaticConfig = testInjector.resolve("staticConfig");
@@ -204,7 +206,7 @@ describe("Plugin Variables service", () => {
 			const pluginVariablesService: IPluginVariablesService = testInjector.resolve("pluginVariablesService");
 			const projectData = testInjector.resolve("projectData");
 			projectData.initializeProjectData();
-			await pluginVariablesService.savePluginVariablesInProjectFile(pluginData, projectData);
+			await pluginVariablesService.savePluginVariablesInProjectFile(pluginData, projectData.projectDir);
 
 			const fs = testInjector.resolve("fs");
 			const staticConfig: IStaticConfig = testInjector.resolve("staticConfig");
@@ -232,7 +234,7 @@ describe("Plugin Variables service", () => {
 			const expectedError = "Unable to find the value for MY_VAR plugin variable into project package.json file. Verify that your package.json file is correct and try again.";
 			let error: string = null;
 			try {
-				await pluginVariablesService.interpolatePluginVariables(pluginData, filePath, projectData);
+				await pluginVariablesService.interpolatePluginVariables(pluginData, filePath, projectData.projectDir);
 			} catch (err) {
 				error = err.message;
 			}
@@ -267,7 +269,7 @@ describe("Plugin Variables service", () => {
 			const filePath = path.join(tempFolder, "myfile");
 			fs.writeFile(filePath, pluginConfigurationFileContent);
 
-			await pluginVariablesService.interpolatePluginVariables(pluginData, filePath, projectData);
+			await pluginVariablesService.interpolatePluginVariables(pluginData, filePath, projectData.projectDir);
 
 			const result = fs.readText(filePath);
 			const expectedResult = '<?xml version="1.0" encoding="UTF-8"?>' +
@@ -307,7 +309,7 @@ describe("Plugin Variables service", () => {
 			const filePath = path.join(tempFolder, "myfile");
 			fs.writeFile(filePath, pluginConfigurationFileContent);
 
-			await pluginVariablesService.interpolatePluginVariables(pluginData, filePath, projectData);
+			await pluginVariablesService.interpolatePluginVariables(pluginData, filePath, projectData.projectDir);
 
 			const result = fs.readText(filePath);
 			const expectedResult = '<?xml version="1.0" encoding="UTF-8"?>' +
@@ -348,7 +350,7 @@ describe("Plugin Variables service", () => {
 			const filePath = path.join(tempFolder, "myfile");
 			fs.writeFile(filePath, pluginConfigurationFileContent);
 
-			await pluginVariablesService.interpolatePluginVariables(pluginData, filePath, projectData);
+			await pluginVariablesService.interpolatePluginVariables(pluginData, filePath, projectData.projectDir);
 
 			const result = fs.readText(filePath);
 			const expectedResult = '<?xml version="1.0" encoding="UTF-8"?>' +

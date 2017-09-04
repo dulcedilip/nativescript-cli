@@ -42,7 +42,9 @@ describe("projectData", () => {
 			fs.exists = (filePath: string) => filePath && path.basename(filePath) === "package.json";
 
 			fs.readJson = () => ({
-				nativescript: {},
+				nativescript: {
+					id: "com.test.testid"
+				},
 				dependencies: dependencies,
 				devDependencies: devDependencies
 			});
