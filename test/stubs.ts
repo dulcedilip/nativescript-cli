@@ -248,11 +248,13 @@ export class ProjectDataStub implements IProjectData {
 	projectId: string;
 	dependencies: any;
 	appDirectoryPath: string;
-	appResourcesDirectoryPath: string;
 	devDependencies: IStringDictionary;
 	projectType: string;
 	initializeProjectData(projectDir?: string): void {
 		this.projectDir = this.projectDir || projectDir;
+	}
+	getAppResourcesDirectoryPath(projectDir?: string): string {
+		return this.projectDir + "/App_Resources";
 	}
 }
 

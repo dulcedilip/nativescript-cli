@@ -29,7 +29,6 @@ import { Utils } from "../lib/common/utils";
 import { CocoaPodsService } from "../lib/services/cocoapods-service";
 import { NpmInstallationManager } from "../lib/npm-installation-manager";
 import { NodePackageManager } from "../lib/node-package-manager";
-import * as constants from "../lib/constants";
 
 import { assert } from "chai";
 import { IOSProvisionService } from "../lib/services/ios-provision-service";
@@ -796,8 +795,7 @@ describe("Merge Project XCConfig files", () => {
 
 		iOSEntitlementsService = testInjector.resolve("iOSEntitlementsService");
 
-		appResourcesXcconfigPath = path.join(projectData.projectDir, constants.APP_FOLDER_NAME,
-			constants.APP_RESOURCES_FOLDER_NAME, "iOS", "build.xcconfig");
+		appResourcesXcconfigPath = path.join(projectData.getAppResourcesDirectoryPath(), "iOS", "build.xcconfig");
 		appResourceXCConfigContent = `CODE_SIGN_IDENTITY = iPhone Distribution
 			// To build for device with XCode 8 you need to specify your development team. More info: https://developer.apple.com/library/prerelease/content/releasenotes/DeveloperTools/RN-Xcode/Introduction.html
 			// DEVELOPMENT_TEAM = YOUR_TEAM_ID;
