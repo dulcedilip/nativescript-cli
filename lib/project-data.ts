@@ -1,6 +1,6 @@
 import * as constants from "./constants";
 import * as path from "path";
-import { cache } from "./common/decorators";
+// import { cache } from "./common/decorators";
 import { EOL } from "os";
 
 interface IProjectType {
@@ -87,9 +87,8 @@ export class ProjectData implements IProjectData {
 		this.$errors.fail("No project found at or above '%s' and neither was a --path specified.", projectDir || this.$options.path || currentDir);
 	}
 
-	@cache()
 	public getAppResourcesDirectoryPath(projectDir?: string): string {
-		if (!!projectDir) {
+		if (!projectDir) {
 			projectDir = this.projectDir;
 		}
 
